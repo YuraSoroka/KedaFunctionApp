@@ -1,21 +1,19 @@
-using System;
-using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace KedaFunctionApp;
 
-public class Function1
+public class ServiceBusTriggerFunction
 {
-    private readonly ILogger<Function1> _logger;
+    private readonly ILogger<ServiceBusTriggerFunction> _logger;
 
-    public Function1(ILogger<Function1> logger)
+    public ServiceBusTriggerFunction(ILogger<ServiceBusTriggerFunction> logger)
     {
         _logger = logger;
     }
 
-    [Function(nameof(Function1))]
+    [Function(nameof(ServiceBusTriggerFunction))]
     public async Task Run(
         [ServiceBusTrigger("keda", "func-subscription", Connection = "ServiceBusConnection")]
         ServiceBusReceivedMessage message,
@@ -25,7 +23,9 @@ public class Function1
         _logger.LogInformation("Message Body: {body}", message.Body);
         _logger.LogInformation("Message Content-Type: {contentType}", message.ContentType);
 
-            // Complete the message
+        await Task.Delay(5000); // work simulation
+
+        // Complete the message
         await messageActions.CompleteMessageAsync(message);
     }
 }
